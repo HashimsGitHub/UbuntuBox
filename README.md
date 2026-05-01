@@ -9,11 +9,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/HashimsGitHub/UbuntuBox/releases/latest">
-    <img src="https://img.shields.io/github/v/release/HashimsGitHub/UbuntuBox?label=Download&style=for-the-badge&color=E95420" alt="Download"/>
+  <a href="https://github.com/HashimsGitHub/UbuntuBox/releases">
+    <img src="https://img.shields.io/badge/Download-UbuntuBoxSetup.exe-E95420?style=for-the-badge&logo=windows" alt="Download"/>
   </a>
+  &nbsp;
   <img src="https://img.shields.io/badge/Windows-10%2F11-0078D4?style=for-the-badge&logo=windows" alt="Windows"/>
+  &nbsp;
   <img src="https://img.shields.io/badge/Ubuntu-24.04-E95420?style=for-the-badge&logo=ubuntu" alt="Ubuntu"/>
+  &nbsp;
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"/>
 </p>
 
@@ -53,7 +56,7 @@ It also integrates directly into **VS Code** as a terminal profile called `Ubunt
 ## Installation
 
 ### Step 1 — Download
-Go to the [Releases page](https://github.com/HashimsGitHub/UbuntuBox/releases/latest) and download `UbuntuBoxSetup.exe`.
+Go to the [Releases page](https://github.com/HashimsGitHub/UbuntuBox/releases) and download `UbuntuBoxSetup.exe`.
 
 ### Step 2 — Run the installer
 Double-click `UbuntuBoxSetup.exe`. When Windows shows:
