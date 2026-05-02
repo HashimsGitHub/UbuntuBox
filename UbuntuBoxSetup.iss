@@ -2,7 +2,7 @@
 ; Requires: Inno Setup 6+
 
 #define MyAppName "UbuntuBox"
-#define MyAppVersion "2.0"
+#define MyAppVersion "2.1"
 #define MyAppPublisher "Hashim Hilal"
 #define MyAppURL "https://github.com/"
 #define MyAppExeName "UbuntuBox.bat"
