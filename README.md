@@ -38,12 +38,6 @@ It also integrates directly into **VS Code** as a terminal profile called `Ubunt
   <img src="screenshot-v2.2.png" alt="UbuntuBox v2.2 — Neofetch welcome screen with Tux logo and custom branding" width="750"/>
 </p>
 
-### Custom welcome screen (Neofetch)
-Every time you open UbuntuBox, a branded welcome screen greets you with:
-- The UbuntuBox cyberpunk Tux logo rendered in the terminal
-- **UbuntuBox** title in cyan
-- **Developed by Hashim Hilal** in bright blue
-- Live system info — OS, kernel, uptime, packages, shell, CPU, memory
 
 ### Coloured bash environment
 The terminal now has a full colour theme baked into the Ubuntu image:
