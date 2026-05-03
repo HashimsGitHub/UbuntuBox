@@ -101,4 +101,4 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 export PATH="$HOME/.local/bin:$PATH"
 
 # ── Welcome message + neofetch ───────────────────────────────────────────────
-neofetch
+sleep 0.3 && neofetch
