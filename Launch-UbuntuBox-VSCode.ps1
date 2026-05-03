@@ -1,4 +1,5 @@
 # Launch-UbuntuBox-VSCode.ps1 - VS Code terminal launcher
+
 $PodmanPath = "$env:ProgramFiles\RedHat\Podman\podman.exe"
 if (-not (Test-Path $PodmanPath)) {
     $PodmanPath = "$env:ProgramFiles (x86)\RedHat\Podman\podman.exe"
@@ -25,6 +26,29 @@ if (-not (Test-Path $HomeMount)) {
     New-Item -ItemType Directory -Path $HomeMount | Out-Null
 }
 
+# ── Seed config files into the persistent home folder (first run only) ────────
+$InstallDir = "$env:ProgramFiles\UbuntuBox"
+if (-not (Test-Path $InstallDir)) {
+    $InstallDir = "$env:ProgramFiles (x86)\UbuntuBox"
+}
+
+$BashrcSrc    = "$InstallDir\bashrc"
+$BashrcDest   = "$HomeMount\.bashrc"
+$NeofetchDir  = "$HomeMount\.config\neofetch"
+$NeofetchSrc  = "$InstallDir\neofetch.conf"
+$NeofetchDest = "$NeofetchDir\config.conf"
+
+if ((Test-Path $BashrcSrc) -and (-not (Test-Path $BashrcDest))) {
+    Copy-Item $BashrcSrc $BashrcDest -Force
+}
+
+if ((Test-Path $NeofetchSrc) -and (-not (Test-Path $NeofetchDest))) {
+    New-Item -ItemType Directory -Path $NeofetchDir -Force | Out-Null
+    Copy-Item $NeofetchSrc $NeofetchDest -Force
+}
+# ─────────────────────────────────────────────────────────────────────────────
+
 $vol = $HomeMount + ":/root"
 $runArgs = @("run", "-it", "--rm", "-v", $vol, "--name", "ubuntubox-vscode", "localhost/ubuntu-box:latest")
+
 & $PodmanPath @runArgs
