@@ -2,7 +2,7 @@
 ; Requires: Inno Setup 6+
 
 #define MyAppName "UbuntuBox"
-#define MyAppVersion "2.1"
+#define MyAppVersion "2.2"
 #define MyAppPublisher "Hashim Hilal"
 #define MyAppURL "https://github.com/"
 #define MyAppExeName "UbuntuBox.bat"
@@ -29,28 +29,28 @@ UninstallDisplayIcon={app}\icon.ico
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "desktopicon";       Description: "{cm:CreateDesktopIcon}";                              GroupDescription: "{cm:AdditionalIcons}"
 Name: "vscodeintegration"; Description: "Add UbuntuBox as VS Code terminal (UbuntuBox (WSL))"; GroupDescription: "VS Code Integration:"; Flags: checkedonce
 
 [Files]
-Source: "Launch-UbuntuBox.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Launch-UbuntuBox.ps1";        DestDir: "{app}"; Flags: ignoreversion
 Source: "Launch-UbuntuBox-VSCode.ps1"; DestDir: "{app}"; Flags: ignoreversion
-Source: "UbuntuBox.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ubuntu-box.tar"; DestDir: "{app}"; Flags: ignoreversion
-Source: "AddVSCodeTerminal.ps1"; DestDir: "{app}"; Flags: ignoreversion
-Source: "UninstallImage.ps1"; DestDir: "{app}"; Flags: ignoreversion
-Source: "UninstallVSCode.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "UbuntuBox.bat";               DestDir: "{app}"; Flags: ignoreversion
+Source: "icon.ico";                    DestDir: "{app}"; Flags: ignoreversion
+Source: "ubuntu-box.tar";             DestDir: "{app}"; Flags: ignoreversion
+Source: "AddVSCodeTerminal.ps1";       DestDir: "{app}"; Flags: ignoreversion
+Source: "UninstallImage.ps1";          DestDir: "{app}"; Flags: ignoreversion
+Source: "UninstallVSCode.ps1";         DestDir: "{app}"; Flags: ignoreversion
 Source: "podman-installer.exe"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
-Source: "EnableFeatures.ps1"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
-Source: "InitPodman.ps1"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
-Source: "LoadImage.ps1"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
+Source: "EnableFeatures.ps1";   DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
+Source: "InitPodman.ps1";       DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
+Source: "LoadImage.ps1";        DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
 
 [Icons]
-Name: "{group}\UbuntuBox"; Filename: "{app}\UbuntuBox.bat"; IconFilename: "{app}\icon.ico"
-Name: "{group}\Uninstall UbuntuBox"; Filename: "{uninstallexe}"
+Name: "{group}\UbuntuBox";                        Filename: "{app}\UbuntuBox.bat"; IconFilename: "{app}\icon.ico"
 Name: "{group}\Add UbuntuBox to VS Code Terminal"; Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\AddVSCodeTerminal.ps1"""; IconFilename: "{app}\icon.ico"
-Name: "{commondesktop}\UbuntuBox"; Filename: "{app}\UbuntuBox.bat"; IconFilename: "{app}\icon.ico"; Tasks: desktopicon
+Name: "{group}\Uninstall UbuntuBox";              Filename: "{uninstallexe}"
+Name: "{commondesktop}\UbuntuBox";                Filename: "{app}\UbuntuBox.bat"; IconFilename: "{app}\icon.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{tmp}\EnableFeatures.ps1"""; Flags: runhidden waituntilterminated; StatusMsg: "Checking Windows features..."

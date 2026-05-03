@@ -13,6 +13,8 @@
     <img src="https://img.shields.io/badge/Download-UbuntuBoxSetup.exe-E95420?style=for-the-badge&logo=windows" alt="Download"/>
   </a>
   &nbsp;
+  <img src="https://img.shields.io/badge/Version-2.2-blue?style=for-the-badge" alt="Version"/>
+  &nbsp;
   <img src="https://img.shields.io/badge/Windows-10%2F11-0078D4?style=for-the-badge&logo=windows" alt="Windows"/>
   &nbsp;
   <img src="https://img.shields.io/badge/Ubuntu-24.04-E95420?style=for-the-badge&logo=ubuntu" alt="Ubuntu"/>
@@ -30,11 +32,39 @@ It also integrates directly into **VS Code** as a terminal profile called `Ubunt
 
 ---
 
+## What's New in v2.2
+
+<p align="center">
+  <img src="screenshot-v2.2.png" alt="UbuntuBox v2.2 — Neofetch welcome screen with Tux logo and custom branding" width="750"/>
+</p>
+
+### Custom welcome screen (Neofetch)
+Every time you open UbuntuBox, a branded welcome screen greets you with:
+- The UbuntuBox cyberpunk Tux logo rendered in the terminal
+- **UbuntuBox** title in cyan
+- **Developed by Hashim Hilal** in bright blue
+- Live system info — OS, kernel, uptime, packages, shell, CPU, memory
+
+### Coloured bash environment
+The terminal now has a full colour theme baked into the Ubuntu image:
+- **Two-line prompt** with cyan brackets, green username, blue hostname and yellow working directory
+- **Coloured `ls`** — directories in cyan, executables in green, archives in yellow, images in magenta
+- **Coloured `grep`** — matches highlighted in red
+- **Coloured `man` pages** — section headers and command names styled for readability
+- Built-in aliases for git, python, and common system commands
+
+### Pre-installed tools
+`neofetch` and `chafa` are now baked into the Ubuntu image, no manual install required.
+
+---
+
 ## Features
 
 - **One-click install** — Podman installed and configured automatically
 - **Full Ubuntu 24.04** bash environment
-- **Pre-installed tools** — git, curl, wget, python3, vim, nano, htop, jq, and more
+- **Branded welcome screen** — Neofetch with custom Tux logo and UbuntuBox branding on every launch
+- **Coloured terminal** — prompt, ls, grep, and man pages all themed out of the box
+- **Pre-installed tools** — git, curl, wget, python3, vim, nano, htop, jq, neofetch, and more
 - **Persistent home folder** — files saved at `C:\Users\<you>\UbuntuBox\` survive container restarts
 - **VS Code integration** — appears as `UbuntuBox (WSL)` in the terminal dropdown
 - **Shared files** — desktop app and VS Code terminal share the same home folder
@@ -73,7 +103,7 @@ The installer will automatically:
 - Create a desktop shortcut
 
 ### Step 4 — Launch
-Double-click **UbuntuBox** on your desktop. A terminal opens with a full Ubuntu bash shell.
+Double-click **UbuntuBox** on your desktop. A terminal opens with the branded welcome screen followed by a full Ubuntu bash shell.
 
 > **Note:** If WSL2 features were not previously enabled, Windows will prompt for a restart after install. Simply reboot and run the installer again — it will complete in seconds the second time.
 
@@ -103,7 +133,8 @@ bash          curl          wget          git
 vim           nano          python3       pip3
 net-tools     htop          jq            tree
 unzip         zip           openssh-client build-essential
-sudo          less          man
+sudo          less          man           neofetch
+chafa
 ```
 
 ---
@@ -161,6 +192,7 @@ Double-click UbuntuBox
       +-- Starts Podman machine (if not running)
       +-- Cleans up any stale session
       +-- Mounts C:\Users\<you>\UbuntuBox -> /root
+      +-- Runs neofetch welcome screen
       +-- Opens Ubuntu bash terminal
 ```
 
@@ -199,6 +231,28 @@ Then relaunch UbuntuBox.
 
 **Blank terminal in VS Code**
 Run the Start Menu shortcut **Add UbuntuBox to VS Code Terminal** and restart VS Code.
+
+---
+
+## Changelog
+
+### v2.2
+- Added Neofetch welcome screen with cyberpunk Tux logo on every launch
+- Custom branding: "UbuntuBox" in cyan, "Developed by Hashim Hilal" in bright blue
+- Full colour bash theme — prompt, ls, grep, man pages
+- Pre-installed neofetch and chafa in the Ubuntu image
+
+### v2.1
+- VS Code terminal integration as `UbuntuBox (WSL)`
+- Podman machine auto-start with retry logic and WSL2 kernel auto-update
+- Shared home folder between desktop app and VS Code terminal
+- Clean uninstall of VS Code profile
+
+### v2.0
+- Initial public release
+- One-click installer with Podman auto-setup
+- Full Ubuntu 24.04 environment
+- Desktop shortcut and Start Menu integration
 
 ---
 
