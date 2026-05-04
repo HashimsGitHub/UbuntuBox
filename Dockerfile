@@ -1,4 +1,5 @@
 FROM ubuntu:24.04
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # ── Core packages + neofetch + chafa ─────────────────────────────────────────
@@ -7,7 +8,9 @@ RUN apt-get update && apt-get install -y \
     net-tools htop jq unzip zip openssh-client \
     build-essential sudo less tree man-db \
     neofetch chafa \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && which neofetch || (echo "ERROR: neofetch not installed" && exit 1) \
+    && which chafa    || (echo "ERROR: chafa not installed"    && exit 1)
 
 # ── Create ubuntubox user ─────────────────────────────────────────────────────
 RUN useradd -m -s /bin/bash ubuntubox && \
