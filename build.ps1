@@ -12,7 +12,7 @@ $InnoSetupPath = "$env:ProgramFiles (x86)\Inno Setup 6\ISCC.exe"
 
 $CertFile = ".\UbuntuBox.pfx"
 
-$CertPassword = "UbuntuBox2024"
+$CertPassword = ""
 
 
 
@@ -63,6 +63,36 @@ if (-not (Test-Path ".\podman-installer.exe")) {
 }
 
 Write-Host "  OK Podman installer found" -ForegroundColor Green
+
+if (-not (Test-Path ".\ubuntubox-logo.png")) {
+
+    Write-Host "  ERROR: ubuntubox-logo.png not found - PNG logo will be missing in container" -ForegroundColor Red
+
+    exit 1
+
+}
+
+Write-Host "  OK ubuntubox-logo.png found" -ForegroundColor Green
+
+if (-not (Test-Path ".\neofetch.conf")) {
+
+    Write-Host "  ERROR: neofetch.conf not found - neofetch will use defaults" -ForegroundColor Red
+
+    exit 1
+
+}
+
+Write-Host "  OK neofetch.conf found" -ForegroundColor Green
+
+if (-not (Test-Path ".\bashrc")) {
+
+    Write-Host "  ERROR: bashrc not found" -ForegroundColor Red
+
+    exit 1
+
+}
+
+Write-Host "  OK bashrc found" -ForegroundColor Green
 
 
 
@@ -174,7 +204,7 @@ Write-Host ""
 
 Write-Host "[4/6] Building Ubuntu container image..." -ForegroundColor Yellow
 
-& $PodmanPath build -t ubuntu-box -f .\Dockerfile .
+& $PodmanPath build --no-cache -t ubuntu-box -f .\Dockerfile .
 
 if ($LASTEXITCODE -ne 0) {
 
@@ -186,6 +216,58 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host "  OK Image built: ubuntu-box" -ForegroundColor Green
 
+# --- Step 4b: Verify image contents ---
+Write-Host ""
+Write-Host "[4b/6] Verifying image contents..." -ForegroundColor Yellow
+
+# Verify neofetch
+$neofetch = & $PodmanPath run --rm localhost/ubuntu-box:latest which neofetch 2>$null
+if (-not $neofetch) {
+    Write-Host "  ERROR: neofetch not found in image - build incomplete!" -ForegroundColor Red
+    Write-Host "  Check your internet connection and retry." -ForegroundColor Yellow
+    exit 1
+}
+Write-Host "  OK neofetch verified at: $neofetch" -ForegroundColor Green
+
+# Verify chafa
+$chafa = & $PodmanPath run --rm localhost/ubuntu-box:latest which chafa 2>$null
+if (-not $chafa) {
+    Write-Host "  ERROR: chafa not found in image - PNG logo will not render!" -ForegroundColor Red
+    exit 1
+}
+Write-Host "  OK chafa verified at: $chafa" -ForegroundColor Green
+
+# Verify ubuntubox-logo.png is baked in
+& $PodmanPath run --rm localhost/ubuntu-box:latest test -f /etc/ubuntubox/ubuntubox-logo.png 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  ERROR: ubuntubox-logo.png not found in image at /etc/ubuntubox/" -ForegroundColor Red
+    Write-Host "  Check Dockerfile COPY ubuntubox-logo.png step." -ForegroundColor Yellow
+    exit 1
+}
+Write-Host "  OK ubuntubox-logo.png verified at: /etc/ubuntubox/ubuntubox-logo.png" -ForegroundColor Green
+
+# Verify neofetch.conf is baked in
+& $PodmanPath run --rm localhost/ubuntu-box:latest test -f /root/.config/neofetch/config.conf 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  ERROR: neofetch config.conf not found in image at /root/.config/neofetch/" -ForegroundColor Red
+    Write-Host "  Check Dockerfile COPY neofetch.conf step." -ForegroundColor Yellow
+    exit 1
+}
+Write-Host "  OK neofetch config.conf verified at: /root/.config/neofetch/config.conf" -ForegroundColor Green
+
+# Print the image_source line so we can confirm it points to the right path
+$imageSource = & $PodmanPath run --rm localhost/ubuntu-box:latest grep "image_source" /root/.config/neofetch/config.conf 2>$null
+Write-Host "  OK neofetch $imageSource" -ForegroundColor Green
+
+# Verify bashrc is baked in
+& $PodmanPath run --rm localhost/ubuntu-box:latest test -f /root/.bashrc 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  ERROR: .bashrc not found in image" -ForegroundColor Red
+    exit 1
+}
+Write-Host "  OK .bashrc verified" -ForegroundColor Green
+
+Write-Host "  ALL IMAGE CONTENTS VERIFIED" -ForegroundColor Green
 
 
 # --- Step 5: Export image to tar ---
@@ -196,7 +278,8 @@ Write-Host "[5/6] Exporting image to ubuntu-box.tar..." -ForegroundColor Yellow
 
 Write-Host "  Please wait, this may take a few minutes..." -ForegroundColor Gray
 
-& $PodmanPath save -o ubuntu-box.tar ubuntu-box
+# Use explicit full tag to ensure correct image is always saved
+& $PodmanPath save -o ubuntu-box.tar localhost/ubuntu-box:latest
 
 if ($LASTEXITCODE -ne 0) {
 
@@ -245,7 +328,7 @@ if (Test-Path $CertFile) {
     if ($found) { $SignTool = $found.FullName }
 
     if ($SignTool) {
-        & $SignTool sign /fd SHA256 /f $CertFile /p $CertPassword /tr http://timestamp.digicert.com /td SHA256 ".\Output\UbuntuBoxSetup.exe"
+        & $SignTool sign /fd SHA256 /f $CertFile /tr http://timestamp.digicert.com /td SHA256 ".\Output\UbuntuBoxSetup.exe"
         if ($LASTEXITCODE -eq 0) {
             Write-Host "  OK Installer signed successfully" -ForegroundColor Green
         } else {

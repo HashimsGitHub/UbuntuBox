@@ -41,20 +41,19 @@ Source: "ubuntu-box.tar";              DestDir: "{app}"; Flags: ignoreversion
 Source: "AddVSCodeTerminal.ps1";       DestDir: "{app}"; Flags: ignoreversion
 Source: "UninstallImage.ps1";          DestDir: "{app}"; Flags: ignoreversion
 Source: "UninstallVSCode.ps1";         DestDir: "{app}"; Flags: ignoreversion
-; FIX: bashrc and neofetch.conf must be installed to {app} so Launch-UbuntuBox.ps1
-; can seed them into the user's persistent home folder on first launch.
-; Without these lines the volume-mount bug causes neofetch and customisation to
-; be silently lost because the baked-in /root inside the image is shadowed.
 Source: "bashrc";                      DestDir: "{app}"; Flags: ignoreversion
 Source: "neofetch.conf";               DestDir: "{app}"; Flags: ignoreversion
+Source: "Podman-KillAll.ps1";          DestDir: "{app}"; Flags: ignoreversion
 Source: "podman-installer.exe";        DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
 Source: "EnableFeatures.ps1";          DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
 Source: "InitPodman.ps1";              DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
 Source: "LoadImage.ps1";               DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
+Source: "Podman-KillAll.ps1";          DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall
 
 [Icons]
 Name: "{group}\UbuntuBox";                         Filename: "{app}\UbuntuBox.bat"; IconFilename: "{app}\icon.ico"
 Name: "{group}\Add UbuntuBox to VS Code Terminal"; Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\AddVSCodeTerminal.ps1"""; IconFilename: "{app}\icon.ico"
+Name: "{group}\Wipe All Podman Images";            Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Podman-KillAll.ps1"""; IconFilename: "{app}\icon.ico"
 Name: "{group}\Uninstall UbuntuBox";               Filename: "{uninstallexe}"
 Name: "{commondesktop}\UbuntuBox";                 Filename: "{app}\UbuntuBox.bat"; IconFilename: "{app}\icon.ico"; Tasks: desktopicon
 
@@ -62,13 +61,18 @@ Name: "{commondesktop}\UbuntuBox";                 Filename: "{app}\UbuntuBox.ba
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{tmp}\EnableFeatures.ps1"""; Flags: runhidden waituntilterminated; StatusMsg: "Checking Windows features..."
 Filename: "{tmp}\podman-installer.exe"; Parameters: "/quiet /norestart"; Flags: waituntilterminated; StatusMsg: "Installing Podman..."
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{tmp}\InitPodman.ps1"""; Flags: runhidden waituntilterminated; StatusMsg: "Initializing Podman machine..."
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{tmp}\Podman-KillAll.ps1"" -NonInteractive"; Flags: runhidden waituntilterminated; StatusMsg: "Clearing existing UbuntuBox images..."
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{tmp}\LoadImage.ps1"" ""{app}"""; Flags: runhidden waituntilterminated; StatusMsg: "Loading Ubuntu container image..."
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\AddVSCodeTerminal.ps1"""; Flags: runhidden waituntilterminated; StatusMsg: "Adding UbuntuBox to VS Code terminal..."; Tasks: vscodeintegration
 Filename: "{app}\UbuntuBox.bat"; Flags: nowait postinstall skipifsilent; Description: "Launch UbuntuBox now"
 
 [UninstallRun]
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\UninstallImage.ps1"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveUbuntuBoxImage"
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\UninstallVSCode.ps1"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveVSCodeProfile"
+; Step 1: Copy KillAll to temp BEFORE {app} is deleted so it survives file removal
+Filename: "cmd.exe"; Parameters: "/C copy ""{app}\Podman-KillAll.ps1"" ""{tmp}\Podman-KillAll.ps1"""; Flags: runhidden waituntilterminated; RunOnceId: "CopyKillAll"
+; Step 2: Run targeted cleanup - removes ONLY UbuntuBox images, Podman machine stays running
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -NonInteractive -File ""{tmp}\Podman-KillAll.ps1"" -NonInteractive"; Flags: runascurrentuser waituntilterminated runhidden; RunOnceId: "PodmanCleanup"
+; Step 3: Remove VS Code integration
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\UninstallVSCode.ps1"""; Flags: runascurrentuser waituntilterminated runhidden; RunOnceId: "RemoveVSCodeProfile"
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
